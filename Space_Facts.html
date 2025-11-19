@@ -157,7 +157,12 @@
     <script>
       const gravitySketch = (p) => {
         const stars = [];
-        const STAR_COUNT = 220;
+        const isMobile =
+          window.matchMedia('(pointer: coarse)').matches ||
+          'ontouchstart' in window ||
+          navigator.maxTouchPoints > 0;
+        const BASE_STAR_COUNT = 120;
+        const STAR_COUNT = isMobile ? BASE_STAR_COUNT : BASE_STAR_COUNT * 5;
         let interactionPoint = null;
         let interactionActive = false;
 

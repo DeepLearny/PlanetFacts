@@ -228,13 +228,16 @@
           ];
           const color = colors[Math.floor(p.random(colors.length))];
 
+          const life = p.random(50, 90);
+
           return {
             x: start.x,
             y: start.y,
             vx,
             vy,
             size: p.random(3, 4.5),
-            life: p.random(50, 90),
+            life,
+            maxLife: life,
             color,
           };
         };
@@ -309,17 +312,19 @@
             s.y += s.vy;
             s.life -= 1;
 
-            const tailLength = 14;
-            const tailX = s.x - (s.vx / Math.hypot(s.vx, s.vy)) * tailLength;
-            const tailY = s.y - (s.vy / Math.hypot(s.vx, s.vy)) * tailLength;
+            const fade = p.constrain(s.life / s.maxLife, 0, 1);
+            const tailLength = 14 * (0.5 + fade * 0.7);
+            const norm = Math.hypot(s.vx, s.vy) || 1;
+            const tailX = s.x - (s.vx / norm) * tailLength;
+            const tailY = s.y - (s.vy / norm) * tailLength;
 
             p.push();
-            p.stroke(...s.color, 200);
-            p.strokeWeight(s.size * 0.6);
+            p.stroke(...s.color, 200 * fade);
+            p.strokeWeight(s.size * 0.6 * (0.6 + fade * 0.4));
             p.line(tailX, tailY, s.x, s.y);
             p.noStroke();
-            p.fill(...s.color, 230);
-            p.circle(s.x, s.y, s.size + 0.8);
+            p.fill(...s.color, 230 * fade);
+            p.circle(s.x, s.y, (s.size + 0.8) * (0.7 + fade * 0.6));
             p.pop();
 
             const offscreenMargin = 80;
@@ -350,9 +355,9 @@
               x: interactionPoint.x,
               y: interactionPoint.y,
               radius: 0,
-              growth: 6,
-              strength: 0.18,
-              life: 60,
+              growth: 3.2,
+              strength: 0.06,
+              life: 90,
             };
           }
           interactionPoint = null;
@@ -393,9 +398,9 @@
                 x: interactionPoint.x,
                 y: interactionPoint.y,
                 radius: 0,
-                growth: 6,
-                strength: 0.18,
-                life: 60,
+                growth: 3.2,
+                strength: 0.06,
+                life: 90,
               };
             }
             interactionPoint = null;
